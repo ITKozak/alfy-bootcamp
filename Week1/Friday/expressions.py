@@ -37,10 +37,17 @@ def find_largest_and_smallest_numbers(num1=0.0, num2=0.0, num3=0.0):
         return (num2, num1)    
 
 def quadratic_equation_solver_from_user_input():
-    a, b, c = input().split()
-    if a == 0:
+    abc = list(input("Enter a b c to calculate quadratic equation: ").split())
+    if len(abc) != 3 or int(abc[0]) == 0:
+        print("To many arguments and/or a == 0.")
         return 1
-    return quadratic_equation_solver(a, b, c)
+    for e in range(len(abc)):
+        try:
+            abc[e] = int(abc[e])
+        except ValueError:
+            print(f"Value {abc[e]} is not int. Try again.")
+            return 1
+    return quadratic_equation_solver(*abc)
 
 def quadratic_equation_solver(a, b, c):
     if b*b < 4*a*c:
