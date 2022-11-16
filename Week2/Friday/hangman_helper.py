@@ -2,7 +2,8 @@
 
 # We use choices to get random list from imported list of words.
 from random import choices
-
+from os import path
+import sys
 # Declaration of consts.
 HINTS = 0
 INITIAL_POINTS = 10
@@ -34,10 +35,27 @@ def get_hint(word: str, pattern: str, ) -> str:
     # If we couldn't provide hint - return text.
     return "Sorry, no more hints for you."
 
-# TODO originall hint function from assigment.
-def filter_words_list(words, pattern, wrong_guess_list) -> list:
+# TODO combine both list coperhension in
+def filter_words_list(pattern: str, wrong_guess_list: list, words: list=WORD_LIST) -> list:
     '''The function returns a new list that contains only the words in the list of words that match the pattern and the previous guesses.'''
-    pass
+    # I'm proud of it, dont kill me pls.
+
+    # Declare list of hints which we'll be updating and returning.
+    hints_list = list()
+    for word in words:
+        # If len of word and pattern is diffetent - this couldnt be our hint.
+        if len(word) == len(pattern): 
+            # Here we checking if letters from wrong list in potential hint.
+            # If it does - this word couldn't be our hint.
+            if [char for char in wrong_guess_list if char in word]:
+                continue
+            # Here we checking if potential hint have the same placement of known letters in pattern.
+            # If they are different - this word couldn't be out hint
+            if [True for i in range(len(word)) if pattern[i] != "_" and pattern[i] == word[i]]:
+                continue
+            # If previous checks dosent trigger - we add current word as a hint.
+            hints_list.append(word)
+    return hints_list
 
 def state_display(pattern: str, score: int, guesses: list, extras: str='') -> None:
     '''Print current state of the game.'''
@@ -58,11 +76,11 @@ def get_input() -> list:
     elif user_input.isalpha() and len(user_input) == 1:
         return "LETTER", user_input.lower()
 
-def word_loader(file_name: str="words.txt") -> list:
+def word_loader(file_name="words.txt") -> list:
     '''Open file with words, parse then and return list of words.'''
     words_list = []
     # Using witth as a more robust solution.
-    with open(file_name,'r') as f:
+    with open(path.join(sys.path[0], file_name), 'r') as f:
         for line in f:
             word = line.strip()
             if(word.isalpha()):
